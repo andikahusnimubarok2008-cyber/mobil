@@ -1,76 +1,57 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classic Racer</title>
 
-    <link rel="stylesheet" href="style.css">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>Classic Racer</title>
+
+ <link rel="stylesheet" href="style.css">
+
 </head>
+
 <body>
 
-    <!-- HUD -->
-    <div id="hud">
-        <div class="hud-item">
-            🚗 Speed :
-            <span id="speed">0</span>
-            <span class="unit">km/h</span>
-        </div>
+<div id="menu">
 
-        <div class="hud-item">
-            🔥 RPM :
-            <span id="rpm">800</span>
-        </div>
+    <h1 id="logo">
 
-        <div class="hud-item">
-            🏁 Score :
-            <span id="score">0</span>
-        </div>
+        CLASSIC RACER
 
-        <div class="hud-item">
-            👑 High Score :
-            <span id="high">0</span>
-        </div>
-    </div>
-<!-- TOUCH CONTROL -->
-<div id="controls">
+    </h1>
 
-    <div class="steer">
-        <button id="left">⬅</button>
-        <button id="right">➡</button>
-    </div>
+    <button id="playBtn">
 
-    <div class="drive">
-      <div class="drive">
-    <button id="down">⬇</button>
-    <button id="up">⬆</button>
-</div>
-    </div>
+        ▶ PLAY
+
+    </button>
+
+    <button id="settingBtn">
+
+        ⚙ SETTINGS
+
+    </button>
+
+    <button id="exitBtn">
+
+        ✖ EXIT
+
+    </button>
+
+    <p id="version">
+
+        Version 0.1
+
+    </p>
 
 </div>
-    <!-- Canvas Game -->
-    <canvas id="game"></canvas>
 
-    <!-- Game Over -->
-    <div id="gameOver">
-
-        <h1>GAME OVER</h1>
-
-        <p>Score :</p>
-
-        <h2 id="finalScore">0</h2>
-
-        <button id="restartBtn">
-            Main Lagi
-        </button>
-
-        <p class="hint">
-            atau tekan <b>ENTER</b>
-        </p>
-
-    </div>
-
-    <script src="script.js"></script>
+<script src="main.js"></script>
 
 </body>
+
 </html>
