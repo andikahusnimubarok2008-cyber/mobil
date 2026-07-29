@@ -1,586 +1,949 @@
-// ================================
+// ===============================
 // CLASSIC RACER
-// Bagian 1
-// ================================
+// SCRIPT BAGIAN 1
+// ===============================
+
+
+// CANVAS
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
+
 // HUD
+
 const speedText = document.getElementById("speed");
 const rpmText = document.getElementById("rpm");
 const scoreText = document.getElementById("score");
 const highText = document.getElementById("high");
 
-const gameOverUI = document.getElementById("gameOver");
-const finalScore = document.getElementById("finalScore");
-const restartBtn = document.getElementById("restartBtn");
 
-// Canvas
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
 
-// Keyboard
-const keys = {};
+// ===============================
+// CANVAS SIZE
+// ===============================
 
-// High Score
-let highScore = Number(localStorage.getItem("highscore")) || 0;
-highText.textContent = highScore;
-
-// ================================
-// PLAYER
-// ================================
-
-const player = {
-
-    width:55,
-    height:95,
-
-    x:canvas.width/2,
-    y:0,
-
-    speed:0,
-    maxSpeed:220,
-
-    acceleration:0.9,
-    brake:1.2,
-    friction:0.45
-
-};
-
-// ================================
-// GAME DATA
-// ================================
-
-let rpm = 800;
-
-let score = 0;
-
-let gameOver = false;
-
-let roadOffset = 0;
-
-let enemies = [];
-
-let spawnCounter = 0;
-
-// ================================
-// RESIZE
-// ================================
 
 function resize(){
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    player.y = canvas.height-player.height-40;
-
 }
+
 
 resize();
 
-window.addEventListener("resize",resize);
 
-// ================================
+window.addEventListener(
+    "resize",
+    resize
+);
+
+
+
+
+// ===============================
+// KEY SYSTEM
+// ===============================
+
+
+const keys = {};
+
+
+
 // KEYBOARD
-// ================================
 
-window.addEventListener("keydown",(e)=>{
+window.addEventListener(
+"keydown",
+(e)=>{
 
-    const key = e.key.toLowerCase();
+
+    let key = e.key.toLowerCase();
+
 
     keys[key]=true;
 
-    if([
+
+    if(
+        [
         "arrowup",
         "arrowdown",
         "arrowleft",
-        "arrowright",
-        " "
-    ].includes(key)){
+        "arrowright"
+        ].includes(key)
+    ){
 
         e.preventDefault();
 
     }
 
-    if(gameOver && key==="enter"){
-
-        restart();
-
-    }
 
 });
 
-window.addEventListener("keyup",(e)=>{
+
+window.addEventListener(
+"keyup",
+(e)=>{
+
 
     keys[e.key.toLowerCase()]=false;
 
+
 });
 
-// ================================
-// BUTTON RESTART
-// ================================
 
-restartBtn.addEventListener("click",restart);
 
-// ================================
-// LANE
-// ================================
 
-const laneX = ()=>[
-    canvas.width/2-110,
-    canvas.width/2,
-    canvas.width/2+110
-];
 
-// ================================
-// SPAWN MOBIL MUSUH
-// ================================
+// ===============================
+// TOUCH BUTTON
+// ===============================
 
-function spawnEnemy(){
 
-    const lane = laneX();
 
-    enemies.push({
+function buttonControl(id,key){
 
-        lane:Math.floor(Math.random()*3),
 
-        x:0,
+    const btn=document.getElementById(id);
 
-        y:-150,
 
-        width:55,
 
-        height:95,
+    btn.addEventListener(
+        "touchstart",
+        (e)=>{
 
-        speed:7+Math.random()*3,
+            e.preventDefault();
 
-        color:`hsl(${Math.random()*360},80%,50%)`
+            keys[key]=true;
 
-    });
+        }
+    );
 
-    enemies[enemies.length-1].x =
-        lane[enemies[enemies.length-1].lane];
+
+
+    btn.addEventListener(
+        "touchend",
+        ()=>{
+
+            keys[key]=false;
+
+        }
+    );
+
 
 }
 
-// ================================
+
+
+buttonControl("gas","arrowup");
+
+buttonControl("brake","arrowdown");
+
+buttonControl("left","arrowleft");
+
+buttonControl("right","arrowright");
+
+
+
+
+
+// ===============================
+// PLAYER CAR
+// ===============================
+
+
+const player={
+
+
+    x:0,
+
+    y:0,
+
+
+    width:55,
+
+    height:95,
+
+
+    speed:0,
+
+
+    maxSpeed:220,
+
+
+    acceleration:0.8,
+
+
+    brake:1.5,
+
+
+    friction:0.5
+
+
+};
+
+
+
+
+
+// POSISI MOBIL
+
+
+function resetPlayer(){
+
+
+    player.x = canvas.width/2;
+
+
+    player.y =
+    canvas.height -
+    player.height -
+    50;
+
+
+}
+
+
+resetPlayer();
+
+
+
+
+
+// ===============================
+// GAME DATA
+// ===============================
+
+
+let rpm = 800;
+
+
+let score = 0;
+
+
+let highScore =
+Number(
+localStorage.getItem("highscore")
+)
+||0;
+
+
+
+highText.textContent=highScore;
+
+
+
+
+// ===============================
 // UPDATE PLAYER
-// ================================
+// ===============================
+
 
 function updatePlayer(){
 
-    // Gas
 
-    if(keys["arrowup"] || keys["w"]){
 
-        player.speed+=player.acceleration;
+    // GAS
 
-    }
+    if(keys["arrowup"]){
 
-    // Rem
 
-    else if(keys["arrowdown"] || keys["s"]){
+        player.speed +=
+        player.acceleration;
 
-        player.speed-=player.brake;
 
     }
 
-    // Lepas gas
+
+
+    // REM
+
+    else if(keys["arrowdown"]){
+
+
+        player.speed -=
+        player.brake;
+
+
+    }
+
+
+
+    // FRICTION
 
     else{
 
-        player.speed-=player.friction;
+
+        player.speed -=
+        player.friction;
+
 
     }
 
-    // Batas
+
+
+    // BATAS SPEED
+
 
     if(player.speed<0)
         player.speed=0;
 
+
+
     if(player.speed>player.maxSpeed)
         player.speed=player.maxSpeed;
 
-    // Belok
 
-    const steer=8;
 
-    if(keys["arrowleft"] || keys["a"]){
+
+    // BEL0K
+
+
+    let steer=8;
+
+
+
+    if(keys["arrowleft"]){
+
 
         player.x-=steer;
 
+
     }
 
-    if(keys["arrowright"] || keys["d"]){
+
+
+    if(keys["arrowright"]){
+
 
         player.x+=steer;
 
+
     }
 
-    const left =
-        canvas.width/2-170+player.width/2;
 
-    const right =
-        canvas.width/2+170-player.width/2;
 
-    if(player.x<left)
-        player.x=left;
+    // BATAS JALAN
 
-    if(player.x>right)
-        player.x=right;
+
+    let leftLimit =
+    canvas.width/2-170;
+
+
+    let rightLimit =
+    canvas.width/2+170;
+
+
+
+    if(player.x<leftLimit)
+        player.x=leftLimit;
+
+
+
+    if(player.x>rightLimit)
+        player.x=rightLimit;
+
+
+
+
 
     // RPM
 
+
     rpm =
-        Math.floor(
-            800+
-            (player.speed/player.maxSpeed)*7200
-        );
+    Math.floor(
+        800+
+        (player.speed/player.maxSpeed)*7200
+    );
 
-    // Jalan
 
-    roadOffset+=player.speed*0.18;
+
 
     // HUD
 
-    speedText.textContent=Math.floor(player.speed);
 
-    rpmText.textContent=rpm;
+    speedText.textContent =
+    Math.floor(player.speed);
+
+
+    rpmText.textContent =
+    rpm;
+
+
 
 }
-// ================================
-// UPDATE MUSUH
-// ================================
 
-function updateEnemies(){
 
-    spawnCounter++;
 
-    // Spawn musuh
-    if(spawnCounter>=55){
 
-        spawnCounter=0;
 
-        spawnEnemy();
+// ===============================
+// GAME UPDATE
+// ===============================
+
+
+function update(){
+
+
+    updatePlayer();
+
+
+}
+
+
+
+
+
+
+// ===============================
+// GAME LOOP
+// ===============================
+
+
+function loop(){
+
+
+    update();
+
+
+    requestAnimationFrame(loop);
+
+
+}
+
+
+
+loop();
+// ===============================
+// ROAD SYSTEM
+// ===============================
+
+
+let roadOffset = 0;
+
+
+
+function drawGrass(){
+
+
+    ctx.fillStyle="#2e8b57";
+
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+}
+
+
+
+
+function drawRoad(){
+
+
+    // jalan
+
+    ctx.fillStyle="#555";
+
+
+    ctx.fillRect(
+
+        canvas.width/2-170,
+
+        0,
+
+        340,
+
+        canvas.height
+
+    );
+
+
+
+
+    // garis putih
+
+    ctx.strokeStyle="white";
+
+    ctx.lineWidth=8;
+
+
+
+    for(
+        let y=-80;
+        y<canvas.height;
+        y+=80
+    ){
+
+
+        let lineY =
+        y + roadOffset % 80;
+
+
+
+        // kiri
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            canvas.width/2-110,
+            lineY
+        );
+
+        ctx.lineTo(
+            canvas.width/2-110,
+            lineY+40
+        );
+
+        ctx.stroke();
+
+
+
+
+
+        // tengah
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            canvas.width/2,
+            lineY
+        );
+
+        ctx.lineTo(
+            canvas.width/2,
+            lineY+40
+        );
+
+        ctx.stroke();
+
+
+
+
+
+        // kanan
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            canvas.width/2+110,
+            lineY
+        );
+
+        ctx.lineTo(
+            canvas.width/2+110,
+            lineY+40
+        );
+
+        ctx.stroke();
+
+
 
     }
 
-    for(let i=enemies.length-1;i>=0;i--){
 
-        const e=enemies[i];
 
-        // Gerakan musuh
-        e.y += e.speed + player.speed*0.08;
+}
 
-        // Lolos dari layar
-        if(e.y > canvas.height + 120){
+
+
+
+
+
+// ===============================
+// CAR DRAW
+// ===============================
+
+
+
+function drawCar(x,y,color){
+
+
+
+    // badan mobil
+
+    ctx.fillStyle=color;
+
+
+    ctx.fillRect(
+
+        x-27,
+
+        y,
+
+        54,
+
+        95
+
+    );
+
+
+
+
+
+    // kaca
+
+    ctx.fillStyle="#aee8ff";
+
+
+    ctx.fillRect(
+
+        x-17,
+
+        y+10,
+
+        34,
+
+        25
+
+    );
+
+
+
+
+
+    // lampu depan
+
+    ctx.fillStyle="yellow";
+
+
+    ctx.fillRect(
+        x-18,
+        y+2,
+        8,
+        6
+    );
+
+
+    ctx.fillRect(
+        x+10,
+        y+2,
+        8,
+        6
+    );
+
+
+
+
+
+    // ban
+
+    ctx.fillStyle="#111";
+
+
+    ctx.fillRect(
+        x-33,
+        y+15,
+        10,
+        25
+    );
+
+
+    ctx.fillRect(
+        x+23,
+        y+15,
+        10,
+        25
+    );
+
+
+    ctx.fillRect(
+        x-33,
+        y+65,
+        10,
+        25
+    );
+
+
+    ctx.fillRect(
+        x+23,
+        y+65,
+        10,
+        25
+    );
+
+
+}
+
+
+
+
+
+
+
+function drawPlayer(){
+
+
+    drawCar(
+
+        player.x,
+
+        player.y,
+
+        "#ff3030"
+
+    );
+
+
+}
+
+
+
+
+
+
+// ===============================
+// DRAW ALL
+// ===============================
+
+
+
+function draw(){
+
+
+    ctx.clearRect(
+
+        0,
+
+        0,
+
+        canvas.width,
+
+        canvas.height
+
+    );
+
+
+
+    drawGrass();
+
+
+    drawRoad();
+
+
+    drawPlayer();
+
+
+
+
+    // animasi jalan
+
+    roadOffset += player.speed * 0.15;
+
+
+
+}
+// ===============================
+// ENEMY CAR SYSTEM
+// ===============================
+
+
+let enemies = [];
+
+let spawnTimer = 0;
+
+
+
+
+// posisi jalur
+
+function getLanes(){
+
+    return [
+
+        canvas.width/2-110,
+
+        canvas.width/2,
+
+        canvas.width/2+110
+
+    ];
+
+}
+
+
+
+
+// buat musuh
+
+
+function spawnEnemy(){
+
+
+    let lanes = getLanes();
+
+
+    let lane =
+    Math.floor(Math.random()*3);
+
+
+
+    enemies.push({
+
+
+        x:lanes[lane],
+
+
+        y:-150,
+
+
+        width:55,
+
+
+        height:95,
+
+
+        speed:
+        5 + Math.random()*4,
+
+
+
+        color:
+        `hsl(${Math.random()*360},80%,50%)`
+
+
+
+    });
+
+
+
+}
+
+
+
+
+
+
+// update musuh
+
+
+function updateEnemies(){
+
+
+
+    spawnTimer++;
+
+
+
+    // spawn setiap waktu tertentu
+
+    if(spawnTimer>80){
+
+
+        spawnTimer=0;
+
+
+        spawnEnemy();
+
+
+    }
+
+
+
+
+
+    for(
+        let i=enemies.length-1;
+        i>=0;
+        i--
+    ){
+
+
+
+        let enemy=enemies[i];
+
+
+
+        enemy.y +=
+        enemy.speed +
+        player.speed*0.08;
+
+
+
+
+
+        // keluar layar
+
+        if(enemy.y > canvas.height+150){
+
+
 
             enemies.splice(i,1);
 
-            score += Math.max(
-                10,
-                Math.floor(player.speed/2)
-            );
 
-            scoreText.textContent = score;
+
+            score +=10;
+
+
+
+            scoreText.textContent=score;
+
+
 
             if(score>highScore){
 
+
                 highScore=score;
+
 
                 localStorage.setItem(
                     "highscore",
                     highScore
                 );
 
-                highText.textContent=highScore;
+
+                highText.textContent=
+                highScore;
+
 
             }
 
-            continue;
+
 
         }
 
-        // ==========================
-        // TABRAKAN
-        // ==========================
 
-        const playerLeft =
-            player.x-player.width/2;
-
-        const playerRight =
-            player.x+player.width/2;
-
-        const enemyLeft =
-            e.x-e.width/2;
-
-        const enemyRight =
-            e.x+e.width/2;
-
-        if(
-
-            playerLeft < enemyRight &&
-            playerRight > enemyLeft &&
-            player.y < e.y + e.height &&
-            player.y + player.height > e.y
-
-        ){
-
-            gameOver = true;
-
-            // tampilkan skor akhir
-            finalScore.textContent = score;
-
-            gameOverUI.style.display = "flex";
-
-            return;
-
-        }
 
     }
 
-}
 
-// ================================
-// RESTART GAME
-// ================================
-
-function restart(){
-
-    score = 0;
-
-    player.speed = 0;
-
-    player.x = canvas.width/2;
-
-    enemies = [];
-
-    spawnCounter = 0;
-
-    roadOffset = 0;
-
-    rpm = 800;
-
-    gameOver = false;
-
-    scoreText.textContent = 0;
-
-    speedText.textContent = 0;
-
-    rpmText.textContent = 800;
-
-    finalScore.textContent = 0;
-
-    gameOverUI.style.display = "none";
 
 }
 
-// ================================
-// UPDATE GAME
-// ================================
 
-function update(){
 
-    if(gameOver) return;
 
-    updatePlayer();
 
-    updateEnemies();
 
-}
-// ================================
-// GAMBAR RUMPUT
-// ================================
+// gambar musuh
 
-function drawGrass(){
-
-    ctx.fillStyle="#2e8b57";
-
-    ctx.fillRect(
-        0,
-        0,
-        canvas.width/2-170,
-        canvas.height
-    );
-
-    ctx.fillRect(
-        canvas.width/2+170,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-}
-
-// ================================
-// GAMBAR JALAN
-// ================================
-
-function drawRoad(){
-
-    ctx.fillStyle="#555";
-
-    ctx.fillRect(
-        canvas.width/2-170,
-        0,
-        340,
-        canvas.height
-    );
-
-    ctx.strokeStyle="white";
-    ctx.lineWidth=8;
-
-    for(let y=-80;y<canvas.height+80;y+=80){
-
-        const yy=y+(roadOffset%80);
-
-        // tengah
-        ctx.beginPath();
-        ctx.moveTo(canvas.width/2,yy);
-        ctx.lineTo(canvas.width/2,yy+40);
-        ctx.stroke();
-
-        // kiri
-        ctx.beginPath();
-        ctx.moveTo(canvas.width/2-110,yy);
-        ctx.lineTo(canvas.width/2-110,yy+40);
-        ctx.stroke();
-
-        // kanan
-        ctx.beginPath();
-        ctx.moveTo(canvas.width/2+110,yy);
-        ctx.lineTo(canvas.width/2+110,yy+40);
-        ctx.stroke();
-
-    }
-
-}
-
-// ================================
-// GAMBAR MOBIL
-// ================================
-
-function drawCar(x,y,color){
-
-    // Body
-    ctx.fillStyle=color;
-
-    ctx.fillRect(
-        x-27,
-        y,
-        54,
-        95
-    );
-
-    // Atap
-    ctx.fillStyle="#aee8ff";
-
-    ctx.fillRect(
-        x-17,
-        y+8,
-        34,
-        24
-    );
-
-    // Kap depan
-    ctx.fillRect(
-        x-15,
-        y+40,
-        30,
-        18
-    );
-
-    // Lampu
-    ctx.fillStyle="yellow";
-
-    ctx.fillRect(x-18,y+2,8,5);
-    ctx.fillRect(x+10,y+2,8,5);
-
-    // Lampu belakang
-    ctx.fillStyle="red";
-
-    ctx.fillRect(x-18,y+88,8,5);
-    ctx.fillRect(x+10,y+88,8,5);
-
-    // Ban
-    ctx.fillStyle="#111";
-
-    ctx.fillRect(x-33,y+8,10,20);
-    ctx.fillRect(x+23,y+8,10,20);
-
-    ctx.fillRect(x-33,y+67,10,20);
-    ctx.fillRect(x+23,y+67,10,20);
-
-}
-
-// ================================
-// PLAYER
-// ================================
-
-function drawPlayer(){
-
-    drawCar(
-        player.x,
-        player.y,
-        "#ff2d2d"
-    );
-
-}
-
-// ================================
-// MUSUH
-// ================================
 
 function drawEnemies(){
 
-    for(const e of enemies){
+
+
+    for(let enemy of enemies){
+
+
 
         drawCar(
-            e.x,
-            e.y,
-            e.color
+
+            enemy.x,
+
+            enemy.y,
+
+            enemy.color
+
         );
+
 
     }
 
-}
 
-// ================================
-// DRAW
-// ================================
-
-function draw(){
-
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-    drawGrass();
-
-    drawRoad();
-
-    drawEnemies();
-
-    drawPlayer();
 
 }
-
-// ================================
-// GAME LOOP
-// ================================
-
-function gameLoop(){
-
-    update();
-
-    draw();
-
-    requestAnimationFrame(gameLoop);
-
-}
-
-gameLoop();
