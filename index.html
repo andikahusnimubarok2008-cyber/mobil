@@ -1,61 +1,155 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Classic Racer</title>
 
     <link rel="stylesheet" href="style.css">
+
 </head>
+
+
 <body>
 
-    <!-- HUD -->
-    <div id="hud">
-        <div class="hud-item">
-            🚗 Speed :
-            <span id="speed">0</span>
-            <span class="unit">km/h</span>
-        </div>
 
-        <div class="hud-item">
-            🔥 RPM :
-            <span id="rpm">800</span>
-        </div>
+<!-- =====================
+     HUD
+===================== -->
 
-        <div class="hud-item">
-            🏁 Score :
-            <span id="score">0</span>
-        </div>
+<div id="hud">
 
-        <div class="hud-item">
-            👑 High Score :
-            <span id="high">0</span>
-        </div>
+    <div>
+        🚗 Speed :
+        <span id="speed">0</span>
+        km/h
     </div>
 
-    <!-- Canvas Game -->
-    <canvas id="game"></canvas>
 
-    <!-- Game Over -->
-    <div id="gameOver">
+    <div>
+        🔥 RPM :
+        <span id="rpm">800</span>
+    </div>
 
-        <h1>GAME OVER</h1>
 
-        <p>Score :</p>
+    <div>
+        🏁 Score :
+        <span id="score">0</span>
+    </div>
 
-        <h2 id="finalScore">0</h2>
 
-        <button id="restartBtn">
-            Main Lagi
+    <div>
+        👑 High :
+        <span id="high">0</span>
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================
+     GAME CANVAS
+===================== -->
+
+<canvas id="game"></canvas>
+
+
+
+
+<!-- =====================
+     TOUCH CONTROL
+===================== -->
+
+
+<div id="controls">
+
+
+    <!-- BELAKANG KIRI -->
+
+    <div class="steering">
+
+        <button id="left">
+            ⬅
         </button>
 
-        <p class="hint">
-            atau tekan <b>ENTER</b>
-        </p>
+
+        <button id="right">
+            ➡
+        </button>
+
 
     </div>
 
-    <script src="script.js"></script>
+
+
+
+    <!-- BELAKANG KANAN -->
+
+    <div class="driving">
+
+
+        <button id="gas">
+            ⬆
+        </button>
+
+
+        <button id="brake">
+            ⬇
+        </button>
+
+
+    </div>
+
+
+
+</div>
+
+
+
+
+
+
+<!-- =====================
+     GAME OVER
+===================== -->
+
+
+<div id="gameOver">
+
+
+    <h1>
+        GAME OVER
+    </h1>
+
+
+    <p>
+        Score
+    </p>
+
+
+    <h2 id="finalScore">
+        0
+    </h2>
+
+
+    <button id="restartBtn">
+        Main Lagi
+    </button>
+
+
+</div>
+
+
+
+
+
+<script src="script.js"></script>
+
 
 </body>
+
 </html>
