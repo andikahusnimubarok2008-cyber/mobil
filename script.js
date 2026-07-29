@@ -1,362 +1,649 @@
-/* =========================
-   RESET
-========================= */
+// ================================
+// CLASSIC RACER
+// Bagian 1
+// ================================
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
-}
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-html,
-body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#111;
-}
+// HUD
+const speedText = document.getElementById("speed");
+const rpmText = document.getElementById("rpm");
+const scoreText = document.getElementById("score");
+const highText = document.getElementById("high");
 
-/* =========================
-   CANVAS
-========================= */
+const gameOverUI = document.getElementById("gameOver");
+const finalScore = document.getElementById("finalScore");
+const restartBtn = document.getElementById("restartBtn");
 
-canvas{
-    display:block;
-    width:100vw;
-    height:100vh;
-    background:#87CEEB;
-}
+// Canvas
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-/* =========================
-   HUD
-========================= */
+// Keyboard
+const keys = {};
+// ================================
+// TOUCH CONTROL
+// ================================
 
-#hud{
+function press(key){
 
-    position:fixed;
-
-    top:20px;
-    left:20px;
-
-    z-index:999;
-
-    color:#fff;
-
-    background:rgba(0,0,0,.35);
-
-    padding:18px 24px;
-
-    border-radius:16px;
-
-    backdrop-filter:blur(8px);
-
-    border:2px solid rgba(255,255,255,.15);
-
-    min-width:240px;
+    keys[key]=true;
 
 }
 
-.hud-item{
 
-    font-size:22px;
+function release(key){
 
-    font-weight:bold;
-
-    margin:10px 0;
-
-    text-shadow:2px 2px 4px #000;
-
-}
-
-.unit{
-
-    font-size:16px;
-
-    opacity:.85;
-
-}
-
-/* =========================
-   GAME OVER
-========================= */
-
-#gameOver{
-
-    position:fixed;
-
-    inset:0;
-
-    display:none;
-
-    justify-content:center;
-
-    align-items:center;
-
-    flex-direction:column;
-
-    background:rgba(0,0,0,.75);
-
-    z-index:2000;
-
-    color:#fff;
-
-    text-align:center;
-
-}
-
-#gameOver h1{
-
-    font-size:72px;
-
-    color:#ff4040;
-
-    margin-bottom:20px;
-
-    text-shadow:0 0 20px red;
-
-}
-
-#gameOver p{
-
-    font-size:28px;
-
-    margin-top:10px;
-
-}
-
-#finalScore{
-
-    font-size:60px;
-
-    color:gold;
-
-    margin:20px 0;
-
-    text-shadow:0 0 15px gold;
-
-}
-
-#restartBtn{
-
-    margin-top:20px;
-
-    padding:15px 45px;
-
-    border:none;
-
-    border-radius:12px;
-
-    cursor:pointer;
-
-    font-size:24px;
-
-    font-weight:bold;
-
-    background:#00c853;
-
-    color:#fff;
-
-    transition:.25s;
-
-}
-
-#restartBtn:hover{
-
-    transform:scale(1.05);
-
-    background:#00e676;
-
-}
-
-.hint{
-
-    margin-top:25px;
-
-    font-size:20px;
-
-    opacity:.8;
-
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media(max-width:700px){
-
-#hud{
-
-    min-width:180px;
-
-    padding:14px;
-
-}
-
-.hud-item{
-
-    font-size:18px;
-
-}
-
-#gameOver h1{
-
-    font-size:48px;
-
-}
-
-#finalScore{
-
-    font-size:42px;
-
-}
-
-#restartBtn{
-
-    font-size:18px;
-
-    padding:12px 30px;
-
-}
-
-}
-#controls{
-    position:fixed;
-    left:0;
-    right:0;
-    bottom:25px;
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-end;
-    padding:0 25px;
-    z-index:9999;
-    pointer-events:none;
-}
-
-.steer{
-    display:flex;
-    gap:18px;
-}
-
-.drive{
-    display:flex;
-    flex-direction:column;
-    gap:18px;
-    align-items:center;
-}
-
-#controls button{
-    pointer-events:auto;
-    user-select:none;
-
-    border:none;
-    border-radius:50%;
-
-    background:rgba(0,0,0,.45);
-    backdrop-filter:blur(8px);
-
-    color:#fff;
-
-    box-shadow:
-    0 5px 15px rgba(0,0,0,.35);
-
-    transition:.1s;
-}
-
-#controls button:active{
-    transform:scale(.92);
-}
-
-/* Tombol kiri kanan */
-#left,
-#right{
-    width:95px;
-    height:95px;
-    font-size:42px;
-}
-
-/* Tombol GAS */
-#up{
-    width:120px;
-    height:120px;
-    font-size:54px;
-    background:#19b64b;
-}
-
-/* Tombol REM */
-#down{
-    width:90px;
-    height:90px;
-    font-size:40px;
-    background:#d63031;
-}
-
-@media(max-width:600px){
-
-    #left,
-    #right{
-        width:80px;
-        height:80px;
-        font-size:36px;
-    }
-
-    #up{
-        width:110px;
-        height:110px;
-        font-size:50px;
-    }
-
-    #down{
-        width:80px;
-        height:80px;
-        font-size:34px;
-    }
-
-}
-
-#controls button{
-
-    width:70px;
-    height:70px;
-
-    border-radius:50%;
-
-    border:3px solid white;
-
-    background:rgba(0,0,0,0.5);
-
-    color:white;
-
-    font-size:35px;
-
-    pointer-events:auto;
-
-    user-select:none;
+    keys[key]=false;
 
 }
 
 
-.steer,
-.drive{
-    display:flex;
-    flex-direction:row;
-    gap:20px;
-    align-items:flex-end;
-}
+// Tombol maju
+const up=document.getElementById("up");
+
+up.addEventListener("touchstart",()=>{
+    press("arrowup");
+});
+
+up.addEventListener("touchend",()=>{
+    release("arrowup");
+});
+
+
+// Tombol mundur
+const down=document.getElementById("down");
+
+down.addEventListener("touchstart",()=>{
+    press("arrowdown");
+});
+
+down.addEventListener("touchend",()=>{
+    release("arrowdown");
+});
+
+
+// Tombol kiri
+const left=document.getElementById("left");
+
+left.addEventListener("touchstart",()=>{
+    press("arrowleft");
+});
+
+left.addEventListener("touchend",()=>{
+    release("arrowleft");
+});
+
+
+// Tombol kanan
+const right=document.getElementById("right");
+
+right.addEventListener("touchstart",()=>{
+    press("arrowright");
+});
+
+right.addEventListener("touchend",()=>{
+    release("arrowright");
+});
+// High Score
+let highScore = Number(localStorage.getItem("highscore")) || 0;
+highText.textContent = highScore;
+
+// ================================
+// PLAYER
+// ================================
+
+const player = {
+
+    width:55,
+    height:95,
+
+    x:canvas.width/2,
+    y:0,
+
+    speed:0,
+    maxSpeed:220,
+
+    acceleration:0.9,
+    brake:1.2,
+    friction:0.45
+
+};
+
+// ================================
+// GAME DATA
+// ================================
+
+let rpm = 800;
+
+let score = 0;
+
+let gameOver = false;
+
+let roadOffset = 0;
+
+let enemies = [];
+
+let spawnCounter = 0;
+
+// ================================
+// RESIZE
+// ================================
+
+function resize(){
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    player.y = canvas.height-player.height-40;
 
 }
 
+resize();
 
-/* HP portrait */
-@media(max-width:600px){
+window.addEventListener("resize",resize);
 
-    #controls button{
+// ================================
+// KEYBOARD
+// ================================
 
-        width:60px;
-        height:60px;
+window.addEventListener("keydown",(e)=>{
 
-        font-size:28px;
+    const key = e.key.toLowerCase();
+
+    keys[key]=true;
+
+    if([
+        "arrowup",
+        "arrowdown",
+        "arrowleft",
+        "arrowright",
+        " "
+    ].includes(key)){
+
+        e.preventDefault();
 
     }
 
+    if(gameOver && key==="enter"){
+
+        restart();
+
+    }
+
+});
+
+window.addEventListener("keyup",(e)=>{
+
+    keys[e.key.toLowerCase()]=false;
+
+});
+
+// ================================
+// BUTTON RESTART
+// ================================
+
+restartBtn.addEventListener("click",restart);
+
+// ================================
+// LANE
+// ================================
+
+const laneX = ()=>[
+    canvas.width/2-110,
+    canvas.width/2,
+    canvas.width/2+110
+];
+
+// ================================
+// SPAWN MOBIL MUSUH
+// ================================
+
+function spawnEnemy(){
+
+    const lane = laneX();
+
+    enemies.push({
+
+        lane:Math.floor(Math.random()*3),
+
+        x:0,
+
+        y:-150,
+
+        width:55,
+
+        height:95,
+
+        speed:7+Math.random()*3,
+
+        color:`hsl(${Math.random()*360},80%,50%)`
+
+    });
+
+    enemies[enemies.length-1].x =
+        lane[enemies[enemies.length-1].lane];
+
 }
+
+// ================================
+// UPDATE PLAYER
+// ================================
+
+function updatePlayer(){
+
+    // Gas
+
+    if(keys["arrowup"] || keys["w"]){
+
+        player.speed+=player.acceleration;
+
+    }
+
+    // Rem
+
+    else if(keys["arrowdown"] || keys["s"]){
+
+        player.speed-=player.brake;
+
+    }
+
+    // Lepas gas
+
+    else{
+
+        player.speed-=player.friction;
+
+    }
+
+    // Batas
+
+    if(player.speed<0)
+        player.speed=0;
+
+    if(player.speed>player.maxSpeed)
+        player.speed=player.maxSpeed;
+
+    // Belok
+
+    const steer=8;
+
+    if(keys["arrowleft"] || keys["a"]){
+
+        player.x-=steer;
+
+    }
+
+    if(keys["arrowright"] || keys["d"]){
+
+        player.x+=steer;
+
+    }
+
+    const left =
+        canvas.width/2-170+player.width/2;
+
+    const right =
+        canvas.width/2+170-player.width/2;
+
+    if(player.x<left)
+        player.x=left;
+
+    if(player.x>right)
+        player.x=right;
+
+    // RPM
+
+    rpm =
+        Math.floor(
+            800+
+            (player.speed/player.maxSpeed)*7200
+        );
+
+    // Jalan
+
+    roadOffset+=player.speed*0.18;
+
+    // HUD
+
+    speedText.textContent=Math.floor(player.speed);
+
+    rpmText.textContent=rpm;
+
+}
+// ================================
+// UPDATE MUSUH
+// ================================
+
+function updateEnemies(){
+
+    spawnCounter++;
+
+    // Spawn musuh
+    if(spawnCounter>=55){
+
+        spawnCounter=0;
+
+        spawnEnemy();
+
+    }
+
+    for(let i=enemies.length-1;i>=0;i--){
+
+        const e=enemies[i];
+
+        // Gerakan musuh
+        e.y += e.speed + player.speed*0.08;
+
+        // Lolos dari layar
+        if(e.y > canvas.height + 120){
+
+            enemies.splice(i,1);
+
+            score += Math.max(
+                10,
+                Math.floor(player.speed/2)
+            );
+
+            scoreText.textContent = score;
+
+            if(score>highScore){
+
+                highScore=score;
+
+                localStorage.setItem(
+                    "highscore",
+                    highScore
+                );
+
+                highText.textContent=highScore;
+
+            }
+
+            continue;
+
+        }
+
+        // ==========================
+        // TABRAKAN
+        // ==========================
+
+        const playerLeft =
+            player.x-player.width/2;
+
+        const playerRight =
+            player.x+player.width/2;
+
+        const enemyLeft =
+            e.x-e.width/2;
+
+        const enemyRight =
+            e.x+e.width/2;
+
+        if(
+
+            playerLeft < enemyRight &&
+            playerRight > enemyLeft &&
+            player.y < e.y + e.height &&
+            player.y + player.height > e.y
+
+        ){
+
+            gameOver = true;
+
+            // tampilkan skor akhir
+            finalScore.textContent = score;
+
+            gameOverUI.style.display = "flex";
+
+            return;
+
+        }
+
+    }
+
+}
+
+// ================================
+// RESTART GAME
+// ================================
+
+function restart(){
+
+    score = 0;
+
+    player.speed = 0;
+
+    player.x = canvas.width/2;
+
+    enemies = [];
+
+    spawnCounter = 0;
+
+    roadOffset = 0;
+
+    rpm = 800;
+
+    gameOver = false;
+
+    scoreText.textContent = 0;
+
+    speedText.textContent = 0;
+
+    rpmText.textContent = 800;
+
+    finalScore.textContent = 0;
+
+    gameOverUI.style.display = "none";
+
+}
+
+// ================================
+// UPDATE GAME
+// ================================
+
+function update(){
+
+    if(gameOver) return;
+
+    updatePlayer();
+
+    updateEnemies();
+
+}
+// ================================
+// GAMBAR RUMPUT
+// ================================
+
+function drawGrass(){
+
+    ctx.fillStyle="#2e8b57";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width/2-170,
+        canvas.height
+    );
+
+    ctx.fillRect(
+        canvas.width/2+170,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+}
+
+// ================================
+// GAMBAR JALAN
+// ================================
+
+function drawRoad(){
+
+    ctx.fillStyle="#555";
+
+    ctx.fillRect(
+        canvas.width/2-170,
+        0,
+        340,
+        canvas.height
+    );
+
+    ctx.strokeStyle="white";
+    ctx.lineWidth=8;
+
+    for(let y=-80;y<canvas.height+80;y+=80){
+
+        const yy=y+(roadOffset%80);
+
+        // tengah
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/2,yy);
+        ctx.lineTo(canvas.width/2,yy+40);
+        ctx.stroke();
+
+        // kiri
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/2-110,yy);
+        ctx.lineTo(canvas.width/2-110,yy+40);
+        ctx.stroke();
+
+        // kanan
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/2+110,yy);
+        ctx.lineTo(canvas.width/2+110,yy+40);
+        ctx.stroke();
+
+    }
+
+}
+
+// ================================
+// GAMBAR MOBIL
+// ================================
+
+function drawCar(x,y,color){
+
+    // Body
+    ctx.fillStyle=color;
+
+    ctx.fillRect(
+        x-27,
+        y,
+        54,
+        95
+    );
+
+    // Atap
+    ctx.fillStyle="#aee8ff";
+
+    ctx.fillRect(
+        x-17,
+        y+8,
+        34,
+        24
+    );
+
+    // Kap depan
+    ctx.fillRect(
+        x-15,
+        y+40,
+        30,
+        18
+    );
+
+    // Lampu
+    ctx.fillStyle="yellow";
+
+    ctx.fillRect(x-18,y+2,8,5);
+    ctx.fillRect(x+10,y+2,8,5);
+
+    // Lampu belakang
+    ctx.fillStyle="red";
+
+    ctx.fillRect(x-18,y+88,8,5);
+    ctx.fillRect(x+10,y+88,8,5);
+
+    // Ban
+    ctx.fillStyle="#111";
+
+    ctx.fillRect(x-33,y+8,10,20);
+    ctx.fillRect(x+23,y+8,10,20);
+
+    ctx.fillRect(x-33,y+67,10,20);
+    ctx.fillRect(x+23,y+67,10,20);
+
+}
+
+// ================================
+// PLAYER
+// ================================
+
+function drawPlayer(){
+
+    drawCar(
+        player.x,
+        player.y,
+        "#ff2d2d"
+    );
+
+}
+
+// ================================
+// MUSUH
+// ================================
+
+function drawEnemies(){
+
+    for(const e of enemies){
+
+        drawCar(
+            e.x,
+            e.y,
+            e.color
+        );
+
+    }
+
+}
+
+// ================================
+// DRAW
+// ================================
+
+function draw(){
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    drawGrass();
+
+    drawRoad();
+
+    drawEnemies();
+
+    drawPlayer();
+
+}
+
+// ================================
+// GAME LOOP
+// ================================
+
+function gameLoop(){
+
+    update();
+
+    draw();
+
+    requestAnimationFrame(gameLoop);
+
+}
+
+gameLoop();
