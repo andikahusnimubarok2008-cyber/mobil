@@ -338,9 +338,11 @@ canvas{
 
 .steer,
 .drive{
-
     display:flex;
+    flex-direction:row;
     gap:20px;
+    align-items:flex-end;
+}
 
 }
 
