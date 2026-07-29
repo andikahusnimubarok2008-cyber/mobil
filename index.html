@@ -1,57 +1,74 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classic Racer</title>
 
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width,initial-scale=1.0">
-
-<title>Classic Racer</title>
-
- <link rel="stylesheet" href="style.css">
-
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<div id="menu">
+    <!-- HUD -->
+    <div id="hud">
+        <div class="hud-item">
+            🚗 Speed :
+            <span id="speed">0</span>
+            <span class="unit">km/h</span>
+        </div>
 
-    <h1 id="logo">
+        <div class="hud-item">
+            🔥 RPM :
+            <span id="rpm">800</span>
+        </div>
 
-        CLASSIC RACER
+        <div class="hud-item">
+            🏁 Score :
+            <span id="score">0</span>
+        </div>
 
-    </h1>
+        <div class="hud-item">
+            👑 High Score :
+            <span id="high">0</span>
+        </div>
+    </div>
+<!-- TOUCH CONTROL -->
+<div id="controls">
 
-    <button id="playBtn">
+    <div class="steer">
+        <button id="left">⬅</button>
+        <button id="right">➡</button>
+    </div>
 
-        ▶ PLAY
-
-    </button>
-
-    <button id="settingBtn">
-
-        ⚙ SETTINGS
-
-    </button>
-
-    <button id="exitBtn">
-
-        ✖ EXIT
-
-    </button>
-
-    <p id="version">
-
-        Version 0.1
-
-    </p>
+    <div class="drive">
+        <button id="up">⬆</button>
+        <button id="down">⬇</button>
+    </div>
 
 </div>
+    <!-- Canvas Game -->
+    <canvas id="game"></canvas>
 
-<script src="main.js"></script>
+    <!-- Game Over -->
+    <div id="gameOver">
+
+        <h1>GAME OVER</h1>
+
+        <p>Score :</p>
+
+        <h2 id="finalScore">0</h2>
+
+        <button id="restartBtn">
+            Main Lagi
+        </button>
+
+        <p class="hint">
+            atau tekan <b>ENTER</b>
+        </p>
+
+    </div>
+
+    <script src="script.js"></script>
 
 </body>
-
 </html>
