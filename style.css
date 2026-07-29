@@ -1,0 +1,222 @@
+/* =========================
+   RESET
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+html,
+body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#111;
+}
+
+/* =========================
+   CANVAS
+========================= */
+
+canvas{
+    display:block;
+    width:100vw;
+    height:100vh;
+    background:#87CEEB;
+}
+
+/* =========================
+   HUD
+========================= */
+
+#hud{
+
+    position:fixed;
+
+    top:20px;
+    left:20px;
+
+    z-index:999;
+
+    color:#fff;
+
+    background:rgba(0,0,0,.35);
+
+    padding:18px 24px;
+
+    border-radius:16px;
+
+    backdrop-filter:blur(8px);
+
+    border:2px solid rgba(255,255,255,.15);
+
+    min-width:240px;
+
+}
+
+.hud-item{
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    margin:10px 0;
+
+    text-shadow:2px 2px 4px #000;
+
+}
+
+.unit{
+
+    font-size:16px;
+
+    opacity:.85;
+
+}
+
+/* =========================
+   GAME OVER
+========================= */
+
+#gameOver{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-direction:column;
+
+    background:rgba(0,0,0,.75);
+
+    z-index:2000;
+
+    color:#fff;
+
+    text-align:center;
+
+}
+
+#gameOver h1{
+
+    font-size:72px;
+
+    color:#ff4040;
+
+    margin-bottom:20px;
+
+    text-shadow:0 0 20px red;
+
+}
+
+#gameOver p{
+
+    font-size:28px;
+
+    margin-top:10px;
+
+}
+
+#finalScore{
+
+    font-size:60px;
+
+    color:gold;
+
+    margin:20px 0;
+
+    text-shadow:0 0 15px gold;
+
+}
+
+#restartBtn{
+
+    margin-top:20px;
+
+    padding:15px 45px;
+
+    border:none;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    background:#00c853;
+
+    color:#fff;
+
+    transition:.25s;
+
+}
+
+#restartBtn:hover{
+
+    transform:scale(1.05);
+
+    background:#00e676;
+
+}
+
+.hint{
+
+    margin-top:25px;
+
+    font-size:20px;
+
+    opacity:.8;
+
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:700px){
+
+#hud{
+
+    min-width:180px;
+
+    padding:14px;
+
+}
+
+.hud-item{
+
+    font-size:18px;
+
+}
+
+#gameOver h1{
+
+    font-size:48px;
+
+}
+
+#finalScore{
+
+    font-size:42px;
+
+}
+
+#restartBtn{
+
+    font-size:18px;
+
+    padding:12px 30px;
+
+}
+
+}
